@@ -1,0 +1,37 @@
+version: '3.7'
+
+services:
+
+  node:
+    container_name: cznodeapp
+    image: nodeapp
+    build:
+      context: .
+      dockerfile: cznode.dockerfile
+      args:
+        PACKAGES: "vim wget curl"
+    ports:
+      - "3001:3000"
+    networks:
+      - cznodeapp-network
+    volumes:
+      - ./logs:/var/www/logs
+    environment:
+      - NODE_ENV=production
+      - APP_VERSION=1.0
+    depends_on: 
+      - mongodb-cz
+      
+  mongodb:
+    container_name: mongodb-cz
+    image: mongo
+    ports:
+      - "27019:27017"
+    networks:
+      - cznodeapp-network
+    volumes:
+      - ./data/cznodeapp:/data/db
+
+networks:
+  cznodeapp-network:
+    driver: bridge
